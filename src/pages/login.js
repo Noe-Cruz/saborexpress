@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import Styles from "../styles/styles";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../firebaseConfig/firebase"; 
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, db } from "../firebaseConfig/firebase"; 
+import { createUserWithEmailAndPassword, getAdditionalUserInfo, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import BarraNavegacion from "../components/barraNavegacion";
 import Footer from "../components/footer";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+
+  const rolesUser = collection(db, "usuarios");
 
   /****Inicio de Sesión mediante Google */
   const provider = new GoogleAuthProvider();
@@ -21,7 +24,12 @@ const Login = () => {
       .then((result) => {
         // Signed in 
         if(result){
-          navigate('/orden');
+          const operationType = getAdditionalUserInfo(result).isNewUser;
+          if(operationType){
+            insertRolUser(result.user.email);
+          }else{
+            getRolUser(result.user.email);
+          }
         }
       })
       .catch((error) => {
@@ -38,7 +46,7 @@ const Login = () => {
     .then((userCredencial) => {
       // Signed up 
       if(userCredencial){
-        navigate('/orden');
+        insertRolUser(userCredencial.user.email);
       }
     })
     .catch((error) => {
@@ -54,7 +62,7 @@ const Login = () => {
       .then((userCredencial) => {
         // Signed in
         if(userCredencial){
-          navigate('/orden');
+          getRolUser(userCredencial.user.email);
         } 
       })
       .catch((error)  => {
@@ -63,6 +71,42 @@ const Login = () => {
         setErrorMessage("Usuario o Contraseña no válidos");
       });
   };
+
+  /**Consulta de roles de Usuario */
+  const insertRolUser = async (user) => {
+    try {
+      const result = await addDoc(collection(db, "usuarios"), {
+        usuario: user,
+        rol: "cliente"
+      });
+
+      if(result.id){
+        navigate('/orden');
+      }
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+
+  const getRolUser = async (user) => {
+    const q = query(rolesUser, where("usuario", "==", user));
+    try {
+      const result = await getDocs(q);
+
+      const rol = result.docs[0].data().rol;
+
+      if(rol === "cliente"){
+        navigate('/orden');
+      }
+      else if(rol === "administrador"){
+        navigate('/pedidos');
+      }
+    } 
+    catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <>

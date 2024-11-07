@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Table, Button, Spinner } from "react-bootstrap";
 import CatalogoModal from "../components/catalogoModal.js";
 import FormModal from "../components/formModal.js";
@@ -6,6 +6,8 @@ import TicketModal from "../components/ticketModal.js";
 import BarraNavegacion from "../components/barraNavegacion.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { db } from "../firebaseConfig/firebase.js";
+import { messaging } from "../firebaseConfig/firebase.js";
+import { getToken } from "firebase/messaging";
 import { collection, addDoc } from "firebase/firestore";
 import Footer from "../components/footer.js";
 
@@ -82,6 +84,7 @@ const Orden = () => {
                 orden: ordenes,
                 pago: datapago,
                 fecha: new Date(),
+                status: false,
                 total: ordenes.reduce((total, orden) => total + parseFloat(orden.subtotal), 0)
             });
 
@@ -97,6 +100,41 @@ const Orden = () => {
             setModal(true);
         }
     }
+
+    /******Permisos de Notificaciones Push */
+    const getPermisos = async () => {
+        try {
+            const permisos = await Notification.requestPermission();
+            if (permisos === "granted") {
+                const token = await getToken(messaging, {vapidKey: "BMUwYuIs2Jr5DN-NVjd5LacBLzey3NVVs4Iy4284dpMzkvNeed6mNLnsBOG3tdRbwNdmL02LozGFUEjsis_cmms"});
+                if(token) {
+                    triggerNotification(token)
+                }
+            }    
+        } 
+        catch (error) {
+            console.log("Error en solicitud de permisos", error);
+        }
+    }
+
+    function triggerNotification(token) {
+        fetch('http://localhost:5000/api/notifications/trigger', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ token: token })
+        }).then(response => {
+            if (response.ok) {
+            console.log('Notificación programada exitosamente');
+            }
+        }).catch(error => console.error('Error al programar notificación:', error));
+    }
+
+    useEffect(() => {
+        getPermisos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
     <>

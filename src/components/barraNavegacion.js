@@ -61,9 +61,9 @@ const Navbar = () => {
   // Actualizar el color de los enlaces basado en la URL
   useEffect(() => {
     const pageLocalizacion = getLocalizacion();
-    if (pageLocalizacion === 'orden' || pageLocalizacion === 'login') {
+    if (pageLocalizacion === 'orden' || pageLocalizacion === 'login' || pageLocalizacion === 'pedidos') {
       setNavColor('#000000fc');
-      if( pageLocalizacion === 'orden' ){
+      if( pageLocalizacion === 'orden' || pageLocalizacion === 'pedidos' ){
         getDataUser();
       } 
     } else {
