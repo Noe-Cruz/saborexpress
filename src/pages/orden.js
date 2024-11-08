@@ -7,7 +7,7 @@ import BarraNavegacion from "../components/barraNavegacion.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { db } from "../firebaseConfig/firebase.js";
 import { messaging } from "../firebaseConfig/firebase.js";
-import { getToken, onMessage, getMessaging } from "firebase/messaging";
+import { getToken, onMessage } from "firebase/messaging";
 import { collection, addDoc } from "firebase/firestore";
 import Footer from "../components/footer.js";
 
@@ -23,8 +23,6 @@ const Orden = () => {
     const [ticket, setTicket] = useState([]);
     const [tokenu, setTokenu] = useState();
 
-    const messaging = getMessaging();
-    
     //Validación de cantidad negativa y calculo de subtotal y total
     const validaChange = (event, index, precio) => {
         const cantidad = event.target.value;
