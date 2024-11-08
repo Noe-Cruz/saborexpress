@@ -109,7 +109,14 @@ const Orden = () => {
             const permisos = await Notification.requestPermission();
             if (permisos === "granted") {
                 const registration = await navigator.serviceWorker.ready;
-                const token = await getToken(messaging, {vapidKey: "BMUwYuIs2Jr5DN-NVjd5LacBLzey3NVVs4Iy4284dpMzkvNeed6mNLnsBOG3tdRbwNdmL02LozGFUEjsis_cmms"});
+
+                // Obtén el token de Firebase Cloud Messaging
+                const token = await getToken(messaging, {
+                    vapidKey: "BMUwYuIs2Jr5DN-NVjd5LacBLzey3NVVs4Iy4284dpMzkvNeed6mNLnsBOG3tdRbwNdmL02LozGFUEjsis_cmms",
+                    serviceWorkerRegistration: registration 
+                });
+
+                //const token = await getToken(messaging, {vapidKey: "BMUwYuIs2Jr5DN-NVjd5LacBLzey3NVVs4Iy4284dpMzkvNeed6mNLnsBOG3tdRbwNdmL02LozGFUEjsis_cmms"});
                 if(token) {
                     console.log("token: ", token);
                     setTokenu(token);
