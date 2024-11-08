@@ -22,11 +22,3 @@ messaging.onBackgroundMessage((payload) => {
     data: payload.notification.data || {}
   });
 });
-
-// eslint-disable-next-line no-restricted-globals
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  event.waitUntil(
-    clients.openWindow(event.notification.data.url)
-  );
-});

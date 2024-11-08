@@ -116,6 +116,7 @@ const Orden = () => {
                 });
 
                 if(token) {
+                    console.log(token);
                     setTokenu(token);
                 }
             }    
@@ -136,7 +137,6 @@ const Orden = () => {
         }).then(response => {
             if (response.ok) {
                 onMessage(messaging, (payload) => {
-                    console.log("Hola");
                     if (Notification.permission === 'granted') {
                         new Notification(payload.notification.title, {
                           body: payload.notification.body,
