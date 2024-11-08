@@ -116,7 +116,6 @@ const Orden = () => {
                     serviceWorkerRegistration: registration 
                 });
 
-                //const token = await getToken(messaging, {vapidKey: "BMUwYuIs2Jr5DN-NVjd5LacBLzey3NVVs4Iy4284dpMzkvNeed6mNLnsBOG3tdRbwNdmL02LozGFUEjsis_cmms"});
                 if(token) {
                     console.log("token: ", token);
                     setTokenu(token);
@@ -138,21 +137,30 @@ const Orden = () => {
             body: JSON.stringify({ token: token })
         }).then(response => {
             if (response.ok) {
-                console.log("respuesta ", response);
-                onMessage(messaging, (payload) => {
-                    if (Notification.permission === 'granted') {
-                        new Notification(payload.notification.title, {
-                          body: payload.notification.body,
-                          icon: '/logo.png',
-                        });
-                    }
-                });
+                console.log("respuesta ", response.status);
+                // onMessage(messaging, (payload) => {
+                //     if (Notification.permission === 'granted') {
+                //         new Notification(payload.notification.title, {
+                //           body: payload.notification.body,
+                //           icon: '/logo.png',
+                //         });
+                //     }
+                // });
             }
         }).catch(error => console.error('Error de notificación:', error));
     }
 
     useEffect(() => {
         getPermisos();
+        onMessage(messaging, (payload) => {
+            console.log("Mensaje recibido en primer plano: ", payload);
+            if (Notification.permission === 'granted') {
+                new Notification(payload.notification.title, {
+                  body: payload.notification.body,
+                  icon: '/logo.png',
+                });
+            }
+        });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
