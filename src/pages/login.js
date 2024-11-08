@@ -39,6 +39,7 @@ const Login = () => {
         const errorMessage = error.message;
         console.log(errorMessage);
         setErrorMessage("Usuario o Contraseña no válidos");
+        setProcesando(false);
       });
   }
 
@@ -57,6 +58,7 @@ const Login = () => {
       const errorMessage = error.message;
       console.log(errorMessage)
       setErrorMessage("Datos no válidos");
+      setProcesando(false);
     });
   };
 
