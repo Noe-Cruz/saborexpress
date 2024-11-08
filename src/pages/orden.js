@@ -7,7 +7,7 @@ import BarraNavegacion from "../components/barraNavegacion.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { db } from "../firebaseConfig/firebase.js";
 import { messaging } from "../firebaseConfig/firebase.js";
-import { getToken } from "firebase/messaging";
+import { getToken, onMessage } from "firebase/messaging";
 import { collection, addDoc } from "firebase/firestore";
 import Footer from "../components/footer.js";
 
@@ -21,6 +21,7 @@ const Orden = () => {
     const [modal, setModal] = useState(false);
     const [total, setTotal] = useState(0);
     const [ticket, setTicket] = useState([]);
+    const [tokenu, setTokenu] = useState();
 
     //Validación de cantidad negativa y calculo de subtotal y total
     const validaChange = (event, index, precio) => {
@@ -98,6 +99,7 @@ const Orden = () => {
         finally {
             setProcesando(false);
             setModal(true);
+            recibeNotificacion(tokenu);
         }
     }
 
@@ -108,7 +110,7 @@ const Orden = () => {
             if (permisos === "granted") {
                 const token = await getToken(messaging, {vapidKey: "BMUwYuIs2Jr5DN-NVjd5LacBLzey3NVVs4Iy4284dpMzkvNeed6mNLnsBOG3tdRbwNdmL02LozGFUEjsis_cmms"});
                 if(token) {
-                    triggerNotification(token)
+                    setTokenu(token);
                 }
             }    
         } 
@@ -117,8 +119,9 @@ const Orden = () => {
         }
     }
 
-    function triggerNotification(token) {
-        fetch('http://localhost:5000/api/notifications/trigger', {
+    /**Genera y recibe Notificación Push*/
+    function recibeNotificacion(token) {
+        fetch('http://localhost:5000/api/createNotificacion', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
@@ -126,9 +129,16 @@ const Orden = () => {
             body: JSON.stringify({ token: token })
         }).then(response => {
             if (response.ok) {
-            console.log('Notificación programada exitosamente');
+                onMessage(messaging, (payload) => {
+                    if (Notification.permission === 'granted') {
+                        new Notification(payload.notification.title, {
+                          body: payload.notification.body,
+                          icon: '/logo.png',
+                        });
+                    }
+                });
             }
-        }).catch(error => console.error('Error al programar notificación:', error));
+        }).catch(error => console.error('Error de notificación:', error));
     }
 
     useEffect(() => {

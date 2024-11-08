@@ -13,13 +13,13 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// Manejador para mensajes en segundo plano
+// Notificaciones en segundo plano
 messaging.onBackgroundMessage((payload) => {
-  console.log('Mensaje en segundo plano:', payload);
   // eslint-disable-next-line no-restricted-globals
   self.registration.showNotification(payload.notification.title, {
     body: payload.notification.body,
-    icon: 'logo.png'
+    icon: 'logo.png',
+    data: payload.notification.data || {}
   });
 });
 

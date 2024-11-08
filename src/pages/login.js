@@ -6,12 +6,14 @@ import { createUserWithEmailAndPassword, getAdditionalUserInfo, GoogleAuthProvid
 import BarraNavegacion from "../components/barraNavegacion";
 import Footer from "../components/footer";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { Spinner } from "react-bootstrap";
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+  const [procesando, setProcesando] = useState(false);
 
   const rolesUser = collection(db, "usuarios");
 
@@ -20,6 +22,7 @@ const Login = () => {
 
   const sesionGoogle = async (event) => {
     event.preventDefault();
+    setProcesando(true);
     await signInWithPopup(auth, provider)
       .then((result) => {
         // Signed in 
@@ -42,6 +45,7 @@ const Login = () => {
   /****Inicio de Sesión y Registro con Correo y Contraseña */
   const createUser = async (event) => {
     event.preventDefault();
+    setProcesando(true);
     await createUserWithEmailAndPassword(auth, email, password )
     .then((userCredencial) => {
       // Signed up 
@@ -58,6 +62,7 @@ const Login = () => {
 
   const iniciarSesion = async (event) => {
     event.preventDefault();
+    setProcesando(true);
     await signInWithEmailAndPassword(auth, email, password)
       .then((userCredencial) => {
         // Signed in
@@ -87,6 +92,9 @@ const Login = () => {
     catch (error) {
       console.log(error);
     }
+    finally {
+      setProcesando(false);
+    }
   }
 
   const getRolUser = async (user) => {
@@ -105,6 +113,9 @@ const Login = () => {
     } 
     catch (error) {
       console.log(error);
+    }
+    finally {
+      setProcesando(false);
     }
   }
 
@@ -160,6 +171,27 @@ const Login = () => {
             Iniciar Sesión con Google
           </button>
         </div>
+        {
+        procesando && ( 
+            <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 9999
+            }}>
+                <div style={{ textAlign: 'center', color: 'white' }}>
+                    <Spinner animation="border" role="status" />
+                    <p>Validando Usuario...</p>
+                </div>
+            </div>
+        )
+        }
       </div>
       <Footer/>
     </>
