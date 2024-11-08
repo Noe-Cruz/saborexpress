@@ -121,7 +121,7 @@ const Orden = () => {
 
     /**Genera y recibe Notificación Push*/
     function recibeNotificacion(token) {
-        fetch('http://localhost:5000/api/createNotificacion', {
+        fetch('https://saborexpressbackend.onrender.com/api/createNotificacion', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
