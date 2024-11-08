@@ -132,6 +132,7 @@ const Orden = () => {
             if (response.ok) {
                 onMessage(messaging, (payload) => {
                     if (Notification.permission === 'granted') {
+                        console.log("permiso concedido: ", payload);
                         new Notification(payload.notification.title, {
                           body: payload.notification.body,
                           icon: '/logo.png',
