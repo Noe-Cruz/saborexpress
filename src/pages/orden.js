@@ -110,6 +110,7 @@ const Orden = () => {
             if (permisos === "granted") {
                 const token = await getToken(messaging, {vapidKey: "BMUwYuIs2Jr5DN-NVjd5LacBLzey3NVVs4Iy4284dpMzkvNeed6mNLnsBOG3tdRbwNdmL02LozGFUEjsis_cmms"});
                 if(token) {
+                    console.log("token: ", token);
                     setTokenu(token);
                 }
             }    
