@@ -108,6 +108,7 @@ const Orden = () => {
         try {
             const permisos = await Notification.requestPermission();
             if (permisos === "granted") {
+                const registration = await navigator.serviceWorker.ready;
                 const token = await getToken(messaging, {vapidKey: "BMUwYuIs2Jr5DN-NVjd5LacBLzey3NVVs4Iy4284dpMzkvNeed6mNLnsBOG3tdRbwNdmL02LozGFUEjsis_cmms"});
                 if(token) {
                     console.log("token: ", token);
@@ -130,9 +131,9 @@ const Orden = () => {
             body: JSON.stringify({ token: token })
         }).then(response => {
             if (response.ok) {
+                console.log("respuesta ", response);
                 onMessage(messaging, (payload) => {
                     if (Notification.permission === 'granted') {
-                        console.log("permiso concedido: ", payload);
                         new Notification(payload.notification.title, {
                           body: payload.notification.body,
                           icon: '/logo.png',
