@@ -150,14 +150,28 @@ const Orden = () => {
 
     useEffect(() => {
         getPermisos();
-        onMessage(messaging, (payload) => {
-            if (Notification.permission === 'granted') {
-                new Notification(payload.notification.title, {
-                  body: payload.notification.body,
-                  icon: '/logo.png',
-                });
-            }
-        });
+        navigator.serviceWorker.ready.then((registration) => {
+            messaging.useServiceWorker(registration);
+            console.log("antes del onMessage");
+            onMessage(messaging, (payload) => {
+                console.log(payload);
+                if (Notification.permission === 'granted') {
+                    new Notification(payload.notification.title, {
+                      body: payload.notification.body,
+                      icon: '/logo.png',
+                    });
+                }
+            });
+          });
+          
+        // onMessage(messaging, (payload) => {
+        //     if (Notification.permission === 'granted') {
+        //         new Notification(payload.notification.title, {
+        //           body: payload.notification.body,
+        //           icon: '/logo.png',
+        //         });
+        //     }
+        // });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
