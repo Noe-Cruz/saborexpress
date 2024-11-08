@@ -136,42 +136,20 @@ const Orden = () => {
             body: JSON.stringify({ token: token })
         }).then(response => {
             if (response.ok) {
-                // onMessage(messaging, (payload) => {
-                //     if (Notification.permission === 'granted') {
-                //         new Notification(payload.notification.title, {
-                //           body: payload.notification.body,
-                //           icon: '/logo.png',
-                //         });
-                //     }
-                // });
+                onMessage(messaging, (payload) => {
+                    if (Notification.permission === 'granted') {
+                        new Notification(payload.notification.title, {
+                          body: payload.notification.body,
+                          icon: '/logo.png',
+                        });
+                    }
+                });
             }
         }).catch(error => console.error('Error de notificación:', error));
     }
 
     useEffect(() => {
         getPermisos();
-        navigator.serviceWorker.ready.then((registration) => {
-            messaging.useServiceWorker(registration);
-            console.log("antes del onMessage");
-            onMessage(messaging, (payload) => {
-                console.log(payload);
-                if (Notification.permission === 'granted') {
-                    new Notification(payload.notification.title, {
-                      body: payload.notification.body,
-                      icon: '/logo.png',
-                    });
-                }
-            });
-          });
-          
-        // onMessage(messaging, (payload) => {
-        //     if (Notification.permission === 'granted') {
-        //         new Notification(payload.notification.title, {
-        //           body: payload.notification.body,
-        //           icon: '/logo.png',
-        //         });
-        //     }
-        // });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
