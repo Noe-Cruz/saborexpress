@@ -76,6 +76,7 @@ const Login = () => {
         const errorMessage = error.message;
         console.log(errorMessage)
         setErrorMessage("Usuario o Contraseña no válidos");
+        setProcesando(false);
       });
   };
 
